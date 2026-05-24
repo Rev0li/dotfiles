@@ -1,11 +1,12 @@
 theme = "rose_pine_moon"
 
 [editor]
-line-number = "relative"
-mouse = true
-cursorline = true
-color-modes = true
-auto-save = true
+line-number    = "relative"
+mouse          = true
+cursorline     = true
+color-modes    = true
+auto-save      = true
+bufferline     = "multiple"
 
 [editor.cursor-shape]
 insert = "bar"
@@ -13,14 +14,21 @@ normal = "block"
 select = "underline"
 
 [editor.lsp]
-display-messages = true
+display-messages  = true
 display-inlay-hints = true
 
 [editor.gutters]
 layout = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
 
+[editor.file-picker]
+hidden = false
+
 [keys.normal]
-A-left = "jump_view_left"
+# Navigation entre splits (cohérent avec WezTerm CTRL+flèches)
+A-left  = "jump_view_left"
 A-right = "jump_view_right"
-A-up = "jump_view_up"
-A-down = "jump_view_down"
+A-up    = "jump_view_up"
+A-down  = "jump_view_down"
+
+# Explorateur de fichiers (Ctrl+n)
+C-n = "toggle_tree"
