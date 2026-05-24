@@ -1,58 +1,31 @@
 #!/usr/bin/env zsh
 # Options et comportements Zsh
 
-# ═══════════════════════════════════════════════════════════
-# 📁 Navigation
-# ═══════════════════════════════════════════════════════════
+# ── Navigation ───────────────────────────────────────────────
 
-setopt AUTO_CD                    # cd automatique sans taper "cd"
-setopt AUTO_PUSHD                 # push automatique dans la pile de dirs
-setopt PUSHD_IGNORE_DUPS          # ignorer les doublons dans la pile
-setopt CDABLE_VARS                # cd vers les variables
+setopt AUTO_CD            # taper un dossier suffit pour y aller
+setopt AUTO_PUSHD         # cd alimente automatiquement la pile de dirs
+setopt PUSHD_IGNORE_DUPS  # pas de doublons dans la pile
+setopt CDABLE_VARS        # cd vers une variable
 
-# ═══════════════════════════════════════════════════════════
-# 📜 Historique
-# ═══════════════════════════════════════════════════════════
+# ── Historique ───────────────────────────────────────────────
 
-setopt HIST_FIND_NO_DUPS          # pas de doublons dans la recherche
-setopt HIST_IGNORE_ALL_DUPS       # ignorer tous les doublons
-setopt HIST_IGNORE_SPACE          # ignorer les commandes avec espace initial
-setopt HIST_SAVE_NO_DUPS          # pas de doublons en sauvegarde
-setopt SHARE_HISTORY              # partager l'historique entre sessions
-setopt EXTENDED_HISTORY           # horodatage dans l'historique
+setopt HIST_FIND_NO_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt EXTENDED_HISTORY
 
-# ═══════════════════════════════════════════════════════════
-# ⌨️ Mode édition
-# ═══════════════════════════════════════════════════════════
+# ── Complétion ───────────────────────────────────────────────
 
-bindkey -v                        # Mode vi/vim
+setopt AUTO_MENU
+setopt COMPLETE_IN_WORD
+setopt ALWAYS_TO_END
+setopt MENU_COMPLETE
 
-# Flèches explicitement liées en mode insert ET normal
-# Sans ça, bindkey -v laisse les flèches non définies en vi-normal
-# ce qui cause des suppressions de caractères inattendues
-bindkey -M viins '^[[A' up-line-or-history
-bindkey -M viins '^[[B' down-line-or-history
-bindkey -M viins '^[[C' forward-char
-bindkey -M viins '^[[D' backward-char
-bindkey -M vicmd '^[[A' up-line-or-history
-bindkey -M vicmd '^[[B' down-line-or-history
-bindkey -M vicmd '^[[C' forward-char
-bindkey -M vicmd '^[[D' backward-char
-
-# ═══════════════════════════════════════════════════════════
-# 🎯 Complétion
-# ═══════════════════════════════════════════════════════════
-
-setopt AUTO_MENU                  # menu automatique pour la complétion
-setopt COMPLETE_IN_WORD           # complétion au milieu des mots
-setopt ALWAYS_TO_END              # curseur à la fin après complétion
-setopt MENU_COMPLETE              # insérer la première complétion immédiatement
-
-# ═══════════════════════════════════════════════════════════
-# 📂 Hook cd — affichage automatique après chaque changement de dossier
-# styles.zsh DOIT être sourcé avant ce fichier dans custom_zshrc.zsh
-# ═══════════════════════════════════════════════════════════
+# ── Hook cd ─────────────────────────────────────────────────
 
 chpwd() {
-    display_tree_centered
+    eza --tree --level=1 --icons --group-directories-first --color=always 2>/dev/null || ls
 }
