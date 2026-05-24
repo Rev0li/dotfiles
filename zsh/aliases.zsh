@@ -56,9 +56,8 @@ alias dots="cd ~/dotfiles"
 
 # Édition rapide des configs
 alias helix-conf="hx ~/dotfiles/helix/config.toml"
-alias starship-conf="hx ~/dotfiles/starship/starship.toml"
+alias starship-conf="hx ~/dotfiles/starship/starship-dark.toml"
 alias wezterm-conf="hx ~/dotfiles/wezterm/wezterm.lua"
-alias wezterm-layout="$DOTFILES_DIR/script/wezterm-launcher.sh"
 alias zsh-conf="hx ~/.zshrc"
 alias clangd-init="$DOTFILES_DIR/script/clangd-init.sh"
 # ═══════════════════════════════════════════════════════════

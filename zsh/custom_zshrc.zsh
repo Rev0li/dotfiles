@@ -19,7 +19,6 @@ export PATH="$DOTFILES_DIR/bin:$PATH"
 
 # Charger tous les modules dans l'ordre
 source "$ZSH_CONFIG_DIR/exports.zsh"
-source "$ZSH_CONFIG_DIR/plugins.zsh"
 source "$ZSH_CONFIG_DIR/styles.zsh"
 source "$ZSH_CONFIG_DIR/options.zsh"
 source "$ZSH_CONFIG_DIR/aliases.zsh"

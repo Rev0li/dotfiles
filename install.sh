@@ -215,24 +215,19 @@ fi
 if bin_ok "mdcat"; then
     skip "mdcat"
 else
-    info "mdcat download ho raha hai..."
-    MDCAT_VERSION="2.7.1" # Ya aapki latest_release() function jo bhi version return kare
-    MDCAT_TAG="mdcat-${MDCAT_VERSION}"
+    info "Téléchargement de mdcat..."
+    MDCAT_VERSION=$(latest_release "$MDCAT_REPO")
+    MDCAT_TAG="mdcat-${MDCAT_VERSION#v}"
+    MDCAT_ARCHIVE="mdcat-${MDCAT_VERSION#v}-x86_64-unknown-linux-gnu.tar.gz"
     MDCAT_TMP=$(mktemp -d)
-    
-    # Yahan 'musl' ki jagah 'gnu' use karna hai
-    MDCAT_ARCHIVE="mdcat-${MDCAT_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
-    
-    # Download URL mein version ki jagah tag name pass karna hai
-    DOWNLOAD_URL="https://github.com/swsnr/mdcat/releases/download/${MDCAT_TAG}/${MDCAT_ARCHIVE}"
-    
-    curl -fsSL "$DOWNLOAD_URL" -o "$MDCAT_TMP/$MDCAT_ARCHIVE"
-    
+    curl -fsSL \
+        "https://github.com/${MDCAT_REPO}/releases/download/${MDCAT_TAG}/${MDCAT_ARCHIVE}" \
+        -o "$MDCAT_TMP/$MDCAT_ARCHIVE"
     tar -xf "$MDCAT_TMP/$MDCAT_ARCHIVE" -C "$MDCAT_TMP"
     MDCAT_BIN=$(find "$MDCAT_TMP" -type f -name "mdcat" | head -1)
     cp "$MDCAT_BIN" "$BIN_DIR/mdcat"
     chmod +x "$BIN_DIR/mdcat"
-    ok "mdcat install ho gaya ($MDCAT_VERSION)"
+    ok "mdcat installé ($MDCAT_VERSION)"
     rm -rf "$MDCAT_TMP"
 fi
 

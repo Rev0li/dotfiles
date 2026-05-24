@@ -37,9 +37,6 @@ export SAVEHIST=10000
 # 🎨 Couleurs
 # ═══════════════════════════════════════════════════════════
 
-# Couleurs pour ls (dossiers en cyan, fichiers en blanc)
-export LS_COLORS="di=1;96:fi=0;97:ln=1;93:ex=1;92:*.md=1;95:*.txt=0;94:*.json=1;91:*.py=1;92:*.js=1;93:*.sh=1;91:*.conf=1;95:*.c=1;96:*.h=1;94"
-
 # Activer les couleurs pour les commandes
 export CLICOLOR=1
 
