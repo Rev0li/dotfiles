@@ -33,6 +33,7 @@ STARSHIP_REPO="starship/starship"
 HX_REPO="helix-editor/helix"
 WEZTERM_REPO="wez/wezterm"
 MONASPACE_REPO="githubnext/monaspace"
+EZA_REPO="eza-community/eza"
 
 # ═══════════════════════════════════════════════════════════
 # Fonctions utilitaires
@@ -89,6 +90,7 @@ installed_version() {
         starship) "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
         hx)       "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1 ;;
         wezterm)  "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
+        eza)      "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
         *)        echo "?" ;;
     esac
 }
@@ -125,6 +127,22 @@ do_install_hx() {
     chmod +x "$BIN_DIR/hx"
     rm -rf "$tmp"
     ok "hx installé ($version)"
+}
+
+do_install_eza() {
+    local version tmp archive
+    version=$(latest_release "$EZA_REPO")
+    tmp=$(mktemp -d)
+    archive="eza_x86_64-unknown-linux-musl.tar.gz"
+    info "Téléchargement de eza $version..."
+    curl -fsSL \
+        "https://github.com/${EZA_REPO}/releases/download/${version}/${archive}" \
+        -o "$tmp/$archive"
+    tar -xf "$tmp/$archive" -C "$tmp"
+    mv "$tmp/eza" "$BIN_DIR/eza"
+    chmod +x "$BIN_DIR/eza"
+    rm -rf "$tmp"
+    ok "eza installé ($version)"
 }
 
 do_install_wezterm() {
@@ -242,6 +260,7 @@ print_header "Binaires → dotfiles/bin/"
 maybe_update "starship" "$STARSHIP_REPO"
 maybe_update "hx"       "$HX_REPO"
 maybe_update "wezterm"  "$WEZTERM_REPO"
+maybe_update "eza"      "$EZA_REPO"
 
 # ═══════════════════════════════════════════════════════════
 # Exposition dans ~/.local/bin/
@@ -249,7 +268,7 @@ maybe_update "wezterm"  "$WEZTERM_REPO"
 
 print_header "Exposition dans ~/.local/bin/"
 
-for bin_name in starship hx wezterm wezterm-gui wezterm-mux-server; do
+for bin_name in starship hx wezterm wezterm-gui wezterm-mux-server eza; do
     if [ -f "$BIN_DIR/$bin_name" ] && [ -x "$BIN_DIR/$bin_name" ]; then
         [ -L "$LOCAL_BIN/$bin_name" ] && rm "$LOCAL_BIN/$bin_name"
         if [ -f "$LOCAL_BIN/$bin_name" ] && [ ! -L "$LOCAL_BIN/$bin_name" ]; then
@@ -273,7 +292,7 @@ else
     info "Téléchargement de Monaspace Neon..."
     MONO_VERSION=$(latest_release "$MONASPACE_REPO")
     MONO_TMP=$(mktemp -d)
-    MONO_ZIP="monaspace-${MONO_VERSION}.zip"
+    MONO_ZIP="monaspace-static-${MONO_VERSION}.zip"
     curl -fsSL \
         "https://github.com/${MONASPACE_REPO}/releases/download/${MONO_VERSION}/${MONO_ZIP}" \
         -o "$MONO_TMP/$MONO_ZIP"
