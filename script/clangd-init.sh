@@ -5,7 +5,7 @@
 # Usage : clangd-init [standard] (défaut : c++17)
 # ═══════════════════════════════════════════════════════════
 
-set -eu
+set -euo pipefail
 
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -57,14 +57,6 @@ if [ -z "$INCLUDE_PATHS" ]; then
     err "Impossible de lire les include paths de g++"
     exit 1
 fi
-
-# ── Filtrer les chemins qui existent vraiment ───────────────
-VALID_PATHS=""
-while IFS= read -r path; do
-    if [ -d "$path" ]; then
-        VALID_PATHS="$VALID_PATHS$path\n"
-    fi
-done <<< "$INCLUDE_PATHS"
 
 # ── Générer compile_flags.txt ───────────────────────────────
 OUTPUT="$(pwd)/compile_flags.txt"
