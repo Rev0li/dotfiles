@@ -158,6 +158,22 @@ if [ -n "${HELIX_RUNTIME:-}" ]; then
 fi
 
 # ═══════════════════════════════════════════════════════════
+# Polices
+# ═══════════════════════════════════════════════════════════
+
+print_header "Polices"
+
+if command -v fc-list &>/dev/null; then
+    if fc-list 2>/dev/null | grep -qi "monaspace neon"; then
+        ok "Monaspace Neon installée"
+    else
+        err "Monaspace Neon absente — lancer ./install.sh"
+    fi
+else
+    warn "fc-list indisponible — vérification police ignorée"
+fi
+
+# ═══════════════════════════════════════════════════════════
 # Système de thème
 # ═══════════════════════════════════════════════════════════
 

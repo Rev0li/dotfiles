@@ -21,22 +21,24 @@ local THEMES = {
 local theme = THEMES[read_theme()] or THEMES.dark
 config.color_scheme = theme.color_scheme
 config.colors = {
-  cursor_bg    = theme.cursor_bg,
+  cursor_bg     = theme.cursor_bg,
   cursor_border = theme.cursor_bg,
-  cursor_fg    = theme.cursor_fg,
-  selection_bg = theme.selection_bg,
-  selection_fg = theme.selection_fg,
-  split        = theme.split,
+  cursor_fg     = theme.cursor_fg,
+  selection_bg  = theme.selection_bg,
+  selection_fg  = theme.selection_fg,
+  split         = theme.split,
 }
 
 -- ── Police & fenêtre ────────────────────────────────────────
 
-config.font             = wezterm.font('JetBrains Mono', { weight = 'Medium' })
-config.font_size        = 12.0
-config.window_padding   = { left = 10, right = 10, top = 10, bottom = 10 }
-config.enable_tab_bar   = true
-config.use_fancy_tab_bar = false
-config.inactive_pane_hsb = { saturation = 0.7, brightness = 0.6 }
+config.font           = wezterm.font('Monaspace Neon', { weight = 'Medium' })
+config.font_size      = 13.0
+config.window_padding = { left = 10, right = 10, top = 10, bottom = 10 }
+
+config.enable_tab_bar             = true
+config.use_fancy_tab_bar          = false
+config.hide_tab_bar_if_only_one_tab = true
+config.inactive_pane_hsb          = { saturation = 0.7, brightness = 0.6 }
 
 -- ── Perf ────────────────────────────────────────────────────
 
@@ -45,61 +47,48 @@ config.animation_fps     = 60
 config.cursor_blink_rate = 500
 config.audible_bell      = 'Disabled'
 config.scrollback_lines  = 10000
-config.default_prog      = { '/usr/bin/zsh' }
+config.default_prog      = { os.getenv('SHELL') or '/usr/bin/zsh' }
 
--- ── Layout au démarrage ─────────────────────────────────────
-
-local HELP_CMD = os.getenv('HOME') .. '/dotfiles/script/wezterm-help.sh'
-
-wezterm.on('gui-startup', function(cmd)
-  local _, pane, window = wezterm.mux.spawn_window(cmd or {})
-  window:gui_window():maximize()
-
-  -- Colonne droite (30%) : aide permanente
-  local help = pane:split { direction = 'Right', size = 0.3 }
-
-  -- Colonne gauche (70%) : pane haut + pane bas
-  pane:split { direction = 'Bottom', size = 0.35 }
-
-  -- Lancer l'aide dans la colonne droite (q pour fermer less)
-  help:send_text('clear && ' .. HELP_CMD .. ' | less -R\n')
-end)
-
--- ── Status badge droite : INSERT / VISUAL ───────────────────
-
-local BADGE = {
-  INSERT = { text = ' INSERT ', fg = '#1a1b26', bg = '#a6e3a1' },
-  VISUAL = { text = ' VISUAL ', fg = '#1a1b26', bg = '#cba6f7' },
-}
+-- ── Status bar : COPY MODE indicator ────────────────────────
 
 config.status_update_interval = 100
 
 wezterm.on('update-right-status', function(window, _)
-  local b = window:active_key_table() == 'copy_mode' and BADGE.VISUAL or BADGE.INSERT
-  window:set_right_status(wezterm.format {
-    { Background = { Color = b.bg } },
-    { Foreground = { Color = b.fg } },
-    { Attribute  = { Intensity = 'Bold' } },
-    { Text = b.text },
-    'ResetAttributes',
-  })
+  if window:active_key_table() == 'copy_mode' then
+    window:set_right_status(wezterm.format {
+      { Background = { Color = '#cba6f7' } },
+      { Foreground = { Color = '#1a1b26' } },
+      { Attribute  = { Intensity = 'Bold' } },
+      { Text = ' COPY ' },
+      'ResetAttributes',
+    })
+  else
+    window:set_right_status ''
+  end
 end)
 
--- ── Raccourcis (s'ajoutent aux defaults, ne remplacent rien) ─
+-- ── Raccourcis ───────────────────────────────────────────────
 
 config.keys = {
-  { key = 'c', mods = 'ALT',       action = act.SplitVertical   { domain = 'CurrentPaneDomain' } },
-  { key = 'v', mods = 'ALT',       action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+  -- Splits
+  { key = 'c', mods = 'ALT', action = act.SplitVertical   { domain = 'CurrentPaneDomain' } },
+  { key = 'v', mods = 'ALT', action = act.SplitHorizontal { domain = 'CurrentPaneDomain' } },
+
+  -- Navigation panes
   { key = 'LeftArrow',  mods = 'CTRL', action = act.ActivatePaneDirection 'Left'  },
   { key = 'RightArrow', mods = 'CTRL', action = act.ActivatePaneDirection 'Right' },
   { key = 'UpArrow',    mods = 'CTRL', action = act.ActivatePaneDirection 'Up'    },
   { key = 'DownArrow',  mods = 'CTRL', action = act.ActivatePaneDirection 'Down'  },
+
+  -- Resize panes
   { key = 'LeftArrow',  mods = 'SHIFT|ALT', action = act.AdjustPaneSize { 'Left',  5 } },
   { key = 'RightArrow', mods = 'SHIFT|ALT', action = act.AdjustPaneSize { 'Right', 5 } },
   { key = 'UpArrow',    mods = 'SHIFT|ALT', action = act.AdjustPaneSize { 'Up',    5 } },
   { key = 'DownArrow',  mods = 'SHIFT|ALT', action = act.AdjustPaneSize { 'Down',  5 } },
-  { key = 'w', mods = 'SUPER', action = act.CloseCurrentPane { confirm = true } },
+
+  -- Tabs
   { key = 'e', mods = 'SUPER', action = act.SpawnTab 'CurrentPaneDomain' },
+  { key = 'w', mods = 'SUPER', action = act.CloseCurrentPane { confirm = true } },
   { key = 'r', mods = 'SUPER', action = act.PromptInputLine {
       description = 'Rename tab',
       action = wezterm.action_callback(function(window, _, line)

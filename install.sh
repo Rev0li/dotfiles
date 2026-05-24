@@ -32,6 +32,7 @@ BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 STARSHIP_REPO="starship-rs/starship"
 HX_REPO="helix-editor/helix"
 WEZTERM_REPO="wez/wezterm"
+MONASPACE_REPO="githubnext/monaspace"
 
 # ═══════════════════════════════════════════════════════════
 # Fonctions utilitaires
@@ -193,10 +194,12 @@ check_dep() {
     fi
 }
 
-check_dep "zsh"  "sudo apt install zsh"
-check_dep "curl" "sudo apt install curl"
-check_dep "tar"  "sudo apt install tar"
-check_dep "git"  "sudo apt install git"
+check_dep "zsh"    "sudo apt install zsh"
+check_dep "curl"   "sudo apt install curl"
+check_dep "tar"    "sudo apt install tar"
+check_dep "git"    "sudo apt install git"
+check_dep "unzip"  "sudo apt install unzip"
+check_dep "fc-cache" "sudo apt install fontconfig"
 
 if [ "$MISSING" -gt 0 ]; then
     echo ""
@@ -256,6 +259,30 @@ for bin_name in starship hx wezterm wezterm-gui wezterm-mux-server; do
         ok "$bin_name → ~/.local/bin/$bin_name"
     fi
 done
+
+# ═══════════════════════════════════════════════════════════
+# Polices → ~/.local/share/fonts/
+# ═══════════════════════════════════════════════════════════
+
+print_header "Polices"
+
+if fc-list 2>/dev/null | grep -qi "monaspace neon"; then
+    skip "Monaspace Neon"
+else
+    info "Téléchargement de Monaspace Neon..."
+    MONO_VERSION=$(latest_release "$MONASPACE_REPO")
+    MONO_TMP=$(mktemp -d)
+    MONO_ZIP="monaspace-${MONO_VERSION}.zip"
+    curl -fsSL \
+        "https://github.com/${MONASPACE_REPO}/releases/download/${MONO_VERSION}/${MONO_ZIP}" \
+        -o "$MONO_TMP/$MONO_ZIP"
+    unzip -q "$MONO_TMP/$MONO_ZIP" -d "$MONO_TMP"
+    find "$MONO_TMP" -name "MonaspaceNeon-*.otf" \
+        -exec cp {} "$HOME/.local/share/fonts/" \;
+    fc-cache -f "$HOME/.local/share/fonts/" 2>/dev/null
+    rm -rf "$MONO_TMP"
+    ok "Monaspace Neon installée ($MONO_VERSION)"
+fi
 
 # ── HELIX_RUNTIME dans exports.zsh ──────────────────────────
 if [ -d "$BIN_DIR/helix-runtime/runtime" ]; then
