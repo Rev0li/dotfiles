@@ -13,7 +13,7 @@ NC='\033[0m'
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 declare -A REPOS=(
-    ["starship"]="starship-rs/starship"
+    ["starship"]="starship/starship"
     ["hx"]="helix-editor/helix"
     ["wezterm"]="wez/wezterm"
 )
@@ -21,7 +21,7 @@ declare -A REPOS=(
 normalize() { echo "$1" | sed 's/^v//'; }
 
 latest_release() {
-    curl -fsSL "https://api.github.com/repos/$1/releases/latest" 2>/dev/null \
+    curl -fsLS "https://api.github.com/repos/$1/releases/latest" 2>/dev/null \
         | grep '"tag_name"' \
         | sed -E 's/.*"tag_name": "([^"]+)".*/\1/' \
     || echo "?"

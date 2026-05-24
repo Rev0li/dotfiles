@@ -29,7 +29,7 @@ BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 
 # ── Dépôts GitHub ───────────────────────────────────────────
 
-STARSHIP_REPO="starship-rs/starship"
+STARSHIP_REPO="starship/starship"
 HX_REPO="helix-editor/helix"
 WEZTERM_REPO="wez/wezterm"
 MONASPACE_REPO="githubnext/monaspace"
@@ -70,9 +70,10 @@ link() {
 
 # Dernière release GitHub
 latest_release() {
-    curl -fsSL "https://api.github.com/repos/$1/releases/latest" \
+    curl -fsLS "https://api.github.com/repos/$1/releases/latest" 2>/dev/null \
         | grep '"tag_name"' \
-        | sed -E 's/.*"tag_name": "([^"]+)".*/\1/'
+        | sed -E 's/.*"tag_name": "([^"]+)".*/\1/' \
+        || echo ""
 }
 
 # Binaire présent et exécutable dans bin/
