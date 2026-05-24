@@ -164,7 +164,7 @@ fi
 print_header "Polices"
 
 if command -v fc-list &>/dev/null; then
-    if fc-list 2>/dev/null | grep -qi "monaspace neon"; then
+    if fc-list 2>/dev/null | grep -i "monaspace neon" > /dev/null; then
         ok "Monaspace Neon installée"
     else
         err "Monaspace Neon absente — lancer ./install.sh"

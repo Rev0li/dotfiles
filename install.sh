@@ -89,7 +89,7 @@ installed_version() {
     case "$1" in
         starship) "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
         hx)       "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1 ;;
-        wezterm)  "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
+        wezterm)  "$bin" --version 2>/dev/null | awk 'NR==1{print $NF}' ;;
         eza)      "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
         *)        echo "?" ;;
     esac
@@ -286,7 +286,7 @@ done
 
 print_header "Polices"
 
-if fc-list 2>/dev/null | grep -qi "monaspace neon"; then
+if fc-list 2>/dev/null | grep -i "monaspace neon" > /dev/null; then
     skip "Monaspace Neon"
 else
     info "Téléchargement de Monaspace Neon..."
