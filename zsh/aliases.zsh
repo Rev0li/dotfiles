@@ -8,10 +8,10 @@ alias la="ls -la"
 alias l="ls -l"
 
 if command -v eza &>/dev/null; then
-    alias ls="eza --icons"
-    alias ll="eza -lah --icons"
-    alias la="eza -la --icons"
-    alias tree="eza --tree --icons"
+    alias ls="eza"
+    alias ll="eza -lah"
+    alias la="eza -la"
+    alias tree="eza --tree"
 fi
 
 if command -v bat &>/dev/null; then

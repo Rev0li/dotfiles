@@ -31,8 +31,6 @@ BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 
 STARSHIP_REPO="starship/starship"
 HX_REPO="helix-editor/helix"
-WEZTERM_REPO="wez/wezterm"
-MONASPACE_REPO="githubnext/monaspace"
 EZA_REPO="eza-community/eza"
 
 # ═══════════════════════════════════════════════════════════
@@ -248,8 +246,6 @@ print_header "Symlinks de configuration"
 
 link "$DOTFILES_DIR/zsh/custom_zshrc.zsh" "$HOME/.zshrc"
 link "$DOTFILES_DIR/helix"                "$HOME/.config/helix"
-mkdir -p "$HOME/.config/wezterm"
-link "$DOTFILES_DIR/wezterm/wezterm.lua"  "$HOME/.config/wezterm/wezterm.lua"
 
 # ═══════════════════════════════════════════════════════════
 # Binaires → dotfiles/bin/
@@ -259,7 +255,6 @@ print_header "Binaires → dotfiles/bin/"
 
 maybe_update "starship" "$STARSHIP_REPO"
 maybe_update "hx"       "$HX_REPO"
-maybe_update "wezterm"  "$WEZTERM_REPO"
 maybe_update "eza"      "$EZA_REPO"
 
 # ═══════════════════════════════════════════════════════════
@@ -285,24 +280,7 @@ done
 # ═══════════════════════════════════════════════════════════
 
 print_header "Polices"
-
-if fc-list 2>/dev/null | grep -i "monaspace neon" > /dev/null; then
-    skip "Monaspace Neon"
-else
-    info "Téléchargement de Monaspace Neon..."
-    MONO_VERSION=$(latest_release "$MONASPACE_REPO")
-    MONO_TMP=$(mktemp -d)
-    MONO_ZIP="monaspace-static-${MONO_VERSION}.zip"
-    curl -fsSL \
-        "https://github.com/${MONASPACE_REPO}/releases/download/${MONO_VERSION}/${MONO_ZIP}" \
-        -o "$MONO_TMP/$MONO_ZIP"
-    unzip -q "$MONO_TMP/$MONO_ZIP" -d "$MONO_TMP"
-    find "$MONO_TMP" -name "MonaspaceNeon-*.otf" \
-        -exec cp {} "$HOME/.local/share/fonts/" \;
-    fc-cache -f "$HOME/.local/share/fonts/" 2>/dev/null
-    rm -rf "$MONO_TMP"
-    ok "Monaspace Neon installée ($MONO_VERSION)"
-fi
+info "Polices ignorées (environnement 42 — terminal système)"
 
 # ── HELIX_RUNTIME dans exports.zsh ──────────────────────────
 if [ -d "$BIN_DIR/helix-runtime/runtime" ]; then
