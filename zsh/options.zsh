@@ -27,5 +27,5 @@ setopt MENU_COMPLETE
 # ── Hook cd ─────────────────────────────────────────────────
 
 chpwd() {
-    eza --tree --level=1 --icons --group-directories-first --color=always 2>/dev/null || ls
+    eza --tree --level=1 --group-directories-first --color=always 2>/dev/null || ls
 }

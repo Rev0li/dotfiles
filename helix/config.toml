@@ -31,4 +31,4 @@ A-up    = "jump_view_up"
 A-down  = "jump_view_down"
 
 # Explorateur de fichiers (Ctrl+n)
-C-n = "toggle_tree"
+C-n = "file_picker"
