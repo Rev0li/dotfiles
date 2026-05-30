@@ -22,7 +22,7 @@ up() {
 # Affichage arborescence à chaque cd
 chpwd() {
     if command -v eza &>/dev/null; then
-        eza --tree --level=2 --icons --git-ignore
+        eza --tree --level=1 --icons --git-ignore
     else
         ls
     fi
