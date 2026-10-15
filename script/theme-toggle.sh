@@ -106,7 +106,13 @@ echo "$TARGET" > "$THEME_FILE"
 
 # ── Kitty — écrire theme.conf puis recharger toutes les fenêtres ──
 if [ -d "$HOME/.config/kitty" ]; then
-    echo "include kitty-themes/${KITTY_THEME}.conf" > "$KITTY_THEME_CONF"
+    # dark = thème par défaut déjà inclus par kitty.conf : le réinclure
+    # déclenche « has already been included » → theme.conf reste vide
+    if [ "$TARGET" = "dark" ]; then
+        echo "# dark : thème par défaut de kitty.conf (00-Default.conf)" > "$KITTY_THEME_CONF"
+    else
+        echo "include kitty-themes/${KITTY_THEME}.conf" > "$KITTY_THEME_CONF"
+    fi
     pkill -USR1 -x kitty 2>/dev/null || true
     ok "Kitty → $KITTY_THEME"
 fi
