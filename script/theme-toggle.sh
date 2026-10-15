@@ -39,7 +39,8 @@ info() { echo -e "  ${CYAN}→${NC} $1"; }
 # ═══════════════════════════════════════════════════════════
 
 mkdir -p "$(dirname "$THEME_FILE")"
-CURRENT=$(cat "$THEME_FILE" 2>/dev/null || echo "dark")
+# Vide si jamais appliqué (machine neuve) : le thème demandé sera alors toujours écrit
+CURRENT=$(cat "$THEME_FILE" 2>/dev/null || true)
 
 # ── Déterminer la cible ─────────────────────────────────────
 if [ "${1:-}" = "dark" ]; then
@@ -48,7 +49,7 @@ elif [ "${1:-}" = "light" ]; then
     TARGET="light"
 else
     # Toggle automatique si pas d'argument
-    if [ "$CURRENT" = "dark" ]; then
+    if [ "$CURRENT" = "dark" ] || [ -z "$CURRENT" ]; then
         TARGET="light"
     else
         TARGET="dark"
