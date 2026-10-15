@@ -230,6 +230,9 @@ link "$DOTFILES_DIR/zsh/custom_zshrc.zsh" "$HOME/.zshrc"
 link "$DOTFILES_DIR/helix"                "$HOME/.config/helix"
 mkdir -p "$HOME/.config/wezterm"
 link "$DOTFILES_DIR/wezterm/wezterm.lua"  "$HOME/.config/wezterm/wezterm.lua"
+mkdir -p "$HOME/.config/kitty"
+link "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
+link "$DOTFILES_DIR/kitty/padding_watcher.py" "$HOME/.config/kitty/padding_watcher.py"
 
 # ═══════════════════════════════════════════════════════════
 # Binaires → dotfiles/bin/
