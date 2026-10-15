@@ -28,7 +28,6 @@ installed_version() {
     case "$1" in
         starship) "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
         hx)       "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1 ;;
-        wezterm)  "$bin" --version 2>/dev/null | awk 'NR==1{print $NF}' ;;
         eza)      "$bin" --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1 ;;
         *)        echo "?" ;;
     esac

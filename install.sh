@@ -31,8 +31,7 @@ BACKUP_DIR="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 
 STARSHIP_REPO="starship/starship"
 HX_REPO="helix-editor/helix"
-WEZTERM_REPO="wez/wezterm"
-MONASPACE_REPO="githubnext/monaspace"
+NERDFONTS_REPO="ryanoasis/nerd-fonts"
 EZA_REPO="eza-community/eza"
 
 # Helpers partagés avec check-versions.sh (normalize, latest_release, installed_version)
@@ -125,23 +124,22 @@ do_install_eza() {
     ok "eza installé ($version)"
 }
 
-do_install_wezterm() {
-    local version url
-    version=$(latest_release "$WEZTERM_REPO")
-    url="https://github.com/${WEZTERM_REPO}/releases/download/${version}/WezTerm-${version}-Ubuntu20.04.AppImage"
-    info "Téléchargement de WezTerm $version..."
-    curl -fsSL "$url" -o "$BIN_DIR/wezterm"
-    chmod +x "$BIN_DIR/wezterm"
-    cat > "$BIN_DIR/wezterm-gui" << 'WRAPPER'
-#!/usr/bin/env bash
-exec "$(dirname "$0")/wezterm" start "$@"
-WRAPPER
-    cat > "$BIN_DIR/wezterm-mux-server" << 'WRAPPER'
-#!/usr/bin/env bash
-exec "$(dirname "$0")/wezterm" cli "$@"
-WRAPPER
-    chmod +x "$BIN_DIR/wezterm-gui" "$BIN_DIR/wezterm-mux-server"
-    ok "wezterm installé ($version)"
+# Kitty : paquet système si présent, sinon installeur officiel (sans sudo)
+do_install_kitty() {
+    if command -v kitty &>/dev/null && [ ! -L "$LOCAL_BIN/kitty" ]; then
+        skip "kitty $(kitty --version | awk '{print $2}') (paquet système)"
+        return
+    fi
+    if [ -x "$BIN_DIR/kitty.app/bin/kitty" ]; then
+        skip "kitty $("$BIN_DIR/kitty.app/bin/kitty" --version | awk '{print $2}')"
+    else
+        info "Téléchargement de Kitty (installeur officiel)..."
+        curl -fsSL https://sw.kovidgoyal.net/kitty/installer.sh \
+            | sh /dev/stdin dest="$BIN_DIR" launch=n > /dev/null
+        ok "kitty installé dans bin/kitty.app"
+    fi
+    ln -sf "$BIN_DIR/kitty.app/bin/kitty"  "$BIN_DIR/kitty"
+    ln -sf "$BIN_DIR/kitty.app/bin/kitten" "$BIN_DIR/kitten"
 }
 
 # ═══════════════════════════════════════════════════════════
@@ -193,12 +191,12 @@ check_dep() {
     fi
 }
 
-check_dep "zsh"    "sudo apt install zsh"
-check_dep "curl"   "sudo apt install curl"
-check_dep "tar"    "sudo apt install tar"
-check_dep "git"    "sudo apt install git"
-check_dep "unzip"  "sudo apt install unzip"
-check_dep "fc-cache" "sudo apt install fontconfig"
+check_dep "zsh" "paquet zsh (apt/dnf)"
+check_dep "curl" "paquet curl (apt/dnf)"
+check_dep "tar" "paquet tar (apt/dnf)"
+check_dep "git" "paquet git (apt/dnf)"
+check_dep "unzip" "paquet unzip (apt/dnf)"
+check_dep "fc-cache" "paquet fontconfig (apt/dnf)"
 
 if [ "$MISSING" -gt 0 ]; then
     echo ""
@@ -228,8 +226,6 @@ print_header "Symlinks de configuration"
 
 link "$DOTFILES_DIR/zsh/custom_zshrc.zsh" "$HOME/.zshrc"
 link "$DOTFILES_DIR/helix"                "$HOME/.config/helix"
-mkdir -p "$HOME/.config/wezterm"
-link "$DOTFILES_DIR/wezterm/wezterm.lua"  "$HOME/.config/wezterm/wezterm.lua"
 mkdir -p "$HOME/.config/kitty"
 link "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
 link "$DOTFILES_DIR/kitty/padding_watcher.py" "$HOME/.config/kitty/padding_watcher.py"
@@ -247,8 +243,8 @@ print_header "Binaires → dotfiles/bin/"
 
 maybe_update "starship" "$STARSHIP_REPO"
 maybe_update "hx"       "$HX_REPO"
-maybe_update "wezterm"  "$WEZTERM_REPO"
 maybe_update "eza"      "$EZA_REPO"
+do_install_kitty
 
 # ═══════════════════════════════════════════════════════════
 # Exposition dans ~/.local/bin/
@@ -256,7 +252,7 @@ maybe_update "eza"      "$EZA_REPO"
 
 print_header "Exposition dans ~/.local/bin/"
 
-for bin_name in starship hx wezterm wezterm-gui wezterm-mux-server eza; do
+for bin_name in starship hx eza kitty kitten; do
     if [ -f "$BIN_DIR/$bin_name" ] && [ -x "$BIN_DIR/$bin_name" ]; then
         [ -L "$LOCAL_BIN/$bin_name" ] && rm "$LOCAL_BIN/$bin_name"
         if [ -f "$LOCAL_BIN/$bin_name" ] && [ ! -L "$LOCAL_BIN/$bin_name" ]; then
@@ -274,22 +270,20 @@ done
 
 print_header "Polices"
 
-if fc-list 2>/dev/null | grep -i "monaspace neon" > /dev/null; then
-    skip "Monaspace Neon"
+if fc-list : family 2>/dev/null | grep -i "FantasqueSansM Nerd Font" >/dev/null; then
+    skip "FantasqueSansM Nerd Font"
 else
-    info "Téléchargement de Monaspace Neon..."
-    MONO_VERSION=$(latest_release "$MONASPACE_REPO")
-    MONO_TMP=$(mktemp -d)
-    MONO_ZIP="monaspace-static-${MONO_VERSION}.zip"
+    info "Téléchargement de FantasqueSansM Nerd Font (police de kitty.conf)..."
+    FONT_TMP=$(mktemp -d)
+    FONT_DIR="$HOME/.local/share/fonts/FantasqueSansMono"
     curl -fsSL \
-        "https://github.com/${MONASPACE_REPO}/releases/download/${MONO_VERSION}/${MONO_ZIP}" \
-        -o "$MONO_TMP/$MONO_ZIP"
-    unzip -q "$MONO_TMP/$MONO_ZIP" -d "$MONO_TMP"
-    find "$MONO_TMP" -name "MonaspaceNeon-*.otf" \
-        -exec cp {} "$HOME/.local/share/fonts/" \;
-    fc-cache -f "$HOME/.local/share/fonts/" 2>/dev/null
-    rm -rf "$MONO_TMP"
-    ok "Monaspace Neon installée ($MONO_VERSION)"
+        "https://github.com/${NERDFONTS_REPO}/releases/latest/download/FantasqueSansMono.zip" \
+        -o "$FONT_TMP/font.zip"
+    mkdir -p "$FONT_DIR"
+    unzip -qo "$FONT_TMP/font.zip" -d "$FONT_DIR"
+    fc-cache -f "$FONT_DIR" 2>/dev/null
+    rm -rf "$FONT_TMP"
+    ok "FantasqueSansM Nerd Font installée"
 fi
 
 # ── HELIX_RUNTIME dans exports.zsh ──────────────────────────

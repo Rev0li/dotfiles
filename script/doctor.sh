@@ -89,9 +89,13 @@ check_link "$HOME/.config/helix" \
     "$DOTFILES_DIR/helix" \
     "~/.config/helix"
 
-check_link "$HOME/.config/wezterm/wezterm.lua" \
-    "$DOTFILES_DIR/wezterm/wezterm.lua" \
-    "~/.config/wezterm/wezterm.lua"
+check_link "$HOME/.config/kitty/kitty.conf" \
+    "$DOTFILES_DIR/kitty/kitty.conf" \
+    "~/.config/kitty/kitty.conf"
+
+check_link "$HOME/.config/kitty/padding_watcher.py" \
+    "$DOTFILES_DIR/kitty/padding_watcher.py" \
+    "~/.config/kitty/padding_watcher.py"
 
 # ═══════════════════════════════════════════════════════════
 # Binaires dans dotfiles/bin/
@@ -101,7 +105,14 @@ print_header "Binaires (dotfiles/bin/)"
 
 check_bin "starship"
 check_bin "hx"
-check_bin "wezterm"
+check_bin "eza"
+
+# Kitty : paquet système ou bin/kitty.app
+if command -v kitty &>/dev/null; then
+    ok "kitty $(kitty --version | awk '{print $2}') → $(command -v kitty)"
+else
+    err "kitty introuvable — lancer ./install.sh"
+fi
 
 # ═══════════════════════════════════════════════════════════
 # Exposition dans ~/.local/bin/
@@ -109,7 +120,7 @@ check_bin "wezterm"
 
 print_header "Symlinks ~/.local/bin/"
 
-for name in starship hx wezterm; do
+for name in starship hx eza; do
     local_link="$HOME/.local/bin/$name"
     if [ ! -L "$local_link" ]; then
         err "$name absent de ~/.local/bin/ — lancer ./install.sh"
@@ -164,10 +175,10 @@ fi
 print_header "Polices"
 
 if command -v fc-list &>/dev/null; then
-    if fc-list 2>/dev/null | grep -i "monaspace neon" > /dev/null; then
-        ok "Monaspace Neon installée"
+    if fc-list : family 2>/dev/null | grep -i "FantasqueSansM Nerd Font" >/dev/null; then
+        ok "FantasqueSansM Nerd Font installée"
     else
-        err "Monaspace Neon absente — lancer ./install.sh"
+        err "FantasqueSansM Nerd Font absente — lancer ./install.sh"
     fi
 else
     warn "fc-list indisponible — vérification police ignorée"

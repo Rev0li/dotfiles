@@ -19,14 +19,13 @@ source "$DOTFILES_DIR/script/lib.sh"
 declare -A REPOS=(
     ["starship"]="starship/starship"
     ["hx"]="helix-editor/helix"
-    ["wezterm"]="wez/wezterm"
     ["eza"]="eza-community/eza"
 )
 
 UPDATES=0
 
 echo ""
-for tool in starship hx wezterm eza; do
+for tool in starship hx eza; do
     installed=$(installed_version "$tool")
     latest=$(latest_release "${REPOS[$tool]}")
     latest=${latest:-?}

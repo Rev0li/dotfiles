@@ -18,9 +18,11 @@ up() {
     cd "$path"
 }
 
-# Raccourcis navigation
+# Remonter d'un niveau
 ..()   { cd ..      }
+# Remonter de 2 niveaux
 ...()  { cd ../..   }
+# Remonter de 3 niveaux
 ....() { cd ../../.. }
 
 # Affichage arborescence à chaque cd (shell interactif uniquement :
@@ -32,4 +34,25 @@ chpwd() {
     else
         ls
     fi
+}
+
+# Point d'entrée des dotfiles : dots [help|search|doctor|update|edit]
+dots() {
+    local cmd="${1:-}"; (( $# )) && shift
+    case "$cmd" in
+        "")        cd "$DOTFILES_DIR" ;;
+        help|h)    "$DOTFILES_DIR/script/dots-help.sh" "$@" ;;
+        search|s)
+            command -v fzf &>/dev/null || { echo "fzf requis — sinon : dots help <terme>"; return 1; }
+            local pick
+            pick=$("$DOTFILES_DIR/script/dots-help.sh" --raw \
+                | fzf --delimiter='\t' --with-nth=2,3,1 --tabstop=22 \
+                      --prompt='dots › ' --header='Entrée : préremplit la commande') || return
+            print -z -- "${${pick#*$'\t'}%%$'\t'*}"   # 2e colonne → ligne de commande
+            ;;
+        doctor)    "$DOTFILES_DIR/script/doctor.sh" ;;
+        update)    git -C "$DOTFILES_DIR" pull --ff-only && "$DOTFILES_DIR/install.sh" ;;
+        edit)      "${EDITOR:-hx}" "$DOTFILES_DIR" ;;
+        *)         echo "Usage : dots [help [terme]|search|doctor|update|edit]"; return 1 ;;
+    esac
 }

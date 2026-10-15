@@ -1,111 +1,91 @@
 # dotfiles
 
-Configuration personnelle pour un environnement de développement portable —
-fonctionne sur Linux/Ubuntu et environnements sans `sudo` (42, machines partagées).
+Environnement de dev portable : **zsh + Starship + Helix + Kitty**.
+Fonctionne sur n'importe quel Linux (Fedora, Ubuntu…), y compris **sans `sudo`**
+(42, machines partagées) : tout s'installe dans le repo et `~/.local/`.
 
-## Stack
-
-| Outil | Rôle |
-|---|---|
-| **Zsh** | Shell avec config modulaire |
-| **Starship** | Prompt adaptatif (dark / light) |
-| **Helix** | Éditeur modal |
-| **Kitty** | Terminal principal (Fedora/Hyprland), padding proportionnel |
-| **WezTerm** | Terminal GPU-accéléré (alternative, machines sans Kitty) |
-| **Monaspace Neon** | Police (installée automatiquement) |
-
-## Installation
+## Démarrer en 2 minutes
 
 ```bash
 git clone https://github.com/Rev0li/dotfiles ~/dotfiles
-cd ~/dotfiles
-./install.sh
+cd ~/dotfiles && ./install.sh
+exec zsh
+dots help          # ← tout ce que cet environnement sait faire
 ```
 
-`install.sh` s'occupe de tout :
+> **Tu découvres cet environnement ?** Retiens une seule commande : `dots help`.
+> Elle liste les alias, fonctions et raccourcis Kitty, générés directement depuis
+> les fichiers de config (donc toujours à jour). `dots search` fait pareil avec fzf
+> et préremplit la commande choisie.
 
-- Vérifie les dépendances (`zsh`, `curl`, `tar`, `git`, `unzip`, `fc-cache`)
-- Crée les symlinks de configuration
-- Télécharge et installe les binaires dans `bin/` (starship, hx, wezterm, eza)
-- Installe la police Monaspace Neon dans `~/.local/share/fonts/`
-- Expose les binaires via `~/.local/bin/`
+## La commande `dots`
 
-> **Sans `sudo` (42, machines partagées) :** fonctionne nativement.
-> WezTerm est téléchargé en AppImage — pas besoin de `libfuse2`.
+| Commande | Effet |
+|---|---|
+| `dots` | aller dans `~/dotfiles` |
+| `dots help [terme]` | aide-mémoire (filtré : `dots help git`, `dots help kitty`) |
+| `dots search` | recherche fzf, Entrée préremplit la commande |
+| `dots doctor` | diagnostic de l'installation |
+| `dots update` | `git pull` + `./install.sh` |
+| `dots edit` | ouvrir le repo dans `$EDITOR` |
 
-## Architecture
+## ⚠ Ce qui ne se comporte pas comme d'habitude
 
-Le détail de l'architecture — structure des fichiers, ordre de chargement des
-modules zsh, système de thème, gestion des binaires et raccourcis WezTerm — est
-documenté dans **[CLAUDE.md](CLAUDE.md)**, la source de vérité unique.
+Si l'outil est installé, ces commandes standard sont **redirigées** :
 
-### Documentation
-- [CLAUDE.md](CLAUDE.md) — architecture détaillée (source de vérité)
-- [docs/install.md](docs/install.md) — détail de l'installation
-- [docs/](docs/) — rapports d'audit datés
+| Tu tapes | Tu obtiens | Original |
+|---|---|---|
+| `ls`, `ll`, `la`, `tree` | eza (icônes) | `\ls` |
+| `cat` | bat (coloration) | `\cat` |
+| `grep` | **ripgrep** — syntaxe différente ! | `\grep` |
+| `cd` | affiche l'arborescence du dossier | — |
+| `ga` | `git add .` (tout le dossier) | `git add <fichier>` |
+
+## Stack
+
+| Outil | Rôle | Config |
+|---|---|---|
+| **Kitty** | Terminal (padding proportionnel, splits) | `kitty/` |
+| **Zsh** | Shell modulaire | `zsh/` |
+| **Starship** | Prompt (dark / light) | `starship/` |
+| **Helix** | Éditeur modal (`$EDITOR`) | `helix/` |
+| **eza, bat, rg, fzf** | Remplaçants modernes de ls, cat, grep | — |
+
+Police : **FantasqueSansM Nerd Font** (installée par `install.sh`).
+
+## Kitty — raccourcis principaux
+
+| Touches | Action |
+|---|---|
+| `Alt+c` / `Alt+v` | split horizontal / vertical |
+| `Ctrl+flèches` | changer de pane |
+| `Shift+Alt+flèches` | redimensionner |
+| `Super+e` | nouvel onglet |
+| `Alt+q` | fermer le pane |
+
+Le padding s'adapte à la taille de la fenêtre (7 % / 3 %) : réglable via
+`PAD_H` / `PAD_V` dans `kitty/padding_watcher.py`.
 
 ## Thèmes
 
-Switch instantané entre dark et light — affecte WezTerm, Helix et Starship.
-
 ```bash
-dark     # Tokyo Night + Rose Pine Moon
-light    # Tokyo Night Day + Rose Pine Dawn
-theme    # toggle automatique
+dark     # Tokyo Night (Kitty) + Rose Pine Moon (Helix)
+light    # Tokyo Night Day (Kitty) + Rose Pine Dawn (Helix)
+theme    # bascule
 ```
 
-## Aliases utiles
+Kitty se recharge tout seul ; Starship au prochain shell.
 
-```bash
-# Dotfiles
-dots            # cd ~/dotfiles
-helix-conf      # éditer la config Helix
-wezterm-conf    # éditer la config WezTerm
-starship-conf   # éditer la config Starship
-zsh-conf        # éditer ~/.zshrc
+## Personnaliser sans casser le repo
 
-# Système
-src / reload    # recharger le shell
-c               # clear
-myip            # IP publique
-ports           # ports en écoute (ss -tuln)
+- **Config propre à ta machine** (hôtes SSH, contournements d'apps) :
+  `zsh/local.zsh` — non versionné, chargé automatiquement. Une ligne
+  `# ── Section ──` au-dessus de tes alias les range dans `dots help`.
+- **Raccourcis système** (dnf, systemd, tailscale, Hyprland…) : `zsh/system.zsh`,
+  chaque bloc ne s'active que si l'outil existe.
 
-# Git
-gs gd ga gc gp gl gco gb
-```
+## Documentation
 
-### Système (Fedora / Hyprland — `zsh/system.zsh`)
-
-Actifs seulement si l'outil est installé.
-
-```bash
-dnfi / dnfr / dnfu / dnfs   # dnf install / remove / upgrade --refresh / search
-failed                      # services en échec
-jerr / jf                   # erreurs du boot courant / logs en direct
-snaps                       # snapshots snapper
-ts / tsup / tsdown          # tailscale status / up / down
-hreload                     # recharger Hyprland
-audio                       # périphériques audio (wpctl status)
-```
-
-### Remplacements à connaître
-
-Si l'outil est installé, ces commandes standard sont redirigées :
-`ls`/`ll`/`la`/`tree` → **eza**, `cat` → **bat**, `grep` → **rg** (syntaxe ripgrep !).
-Pour l'original : `command grep …` ou `\grep …`. Chaque `cd` affiche l'arborescence du dossier.
-
-Les alias propres à la machine (hôtes SSH, contournements d'apps) vont dans
-`zsh/local.zsh`, non versionné.
-
-## Mise à jour des binaires
-
-```bash
-# Vérifier ce qui est obsolète
-./script/check-versions.sh
-
-# Forcer la mise à jour d'un outil
-rm ~/dotfiles/bin/hx && ./install.sh
-
-# Diagnostic complet
-./script/doctor.sh
-```
+- [docs/install.md](docs/install.md) — ce que fait `install.sh`, mise à jour des binaires
+- [CLAUDE.md](CLAUDE.md) — architecture détaillée
+- [docs/](docs/) — rapports d'audit datés

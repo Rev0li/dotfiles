@@ -24,7 +24,7 @@ layout = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
 hidden = false
 
 [keys.normal]
-# Navigation entre splits (cohérent avec WezTerm CTRL+flèches)
+# Navigation entre splits (cohérent avec Kitty CTRL+flèches)
 A-left  = "jump_view_left"
 A-right = "jump_view_right"
 A-up    = "jump_view_up"

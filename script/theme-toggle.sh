@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════
 # 🎨 Toggle thème dark / light
-# Affecte : WezTerm + Helix
+# Affecte : Kitty + Helix + Starship
 # Usage   : theme-toggle [dark|light]
 # ═══════════════════════════════════════════════════════════
 
@@ -12,8 +12,9 @@ THEME_FILE="$HOME/.config/theme"           # fichier d'état : "dark" ou "light"
 HELIX_CONFIG="$DOTFILES_DIR/helix/config.toml"
 
 # ── Thèmes ──────────────────────────────────────────────────
-WEZTERM_DARK="Tokyo Night"
-WEZTERM_LIGHT="Tokyo Night Day"
+KITTY_DARK="Tokyo-Night"
+KITTY_LIGHT="Tokyo-Night-Day"
+KITTY_THEME_CONF="$HOME/.config/kitty/theme.conf"   # inclus par kitty.conf (globinclude)
 
 HELIX_DARK="rose_pine_moon"
 HELIX_LIGHT="rose_pine_dawn"
@@ -64,11 +65,11 @@ fi
 # ═══════════════════════════════════════════════════════════
 
 if [ "$TARGET" = "dark" ]; then
-    WEZTERM_THEME="$WEZTERM_DARK"
+    KITTY_THEME="$KITTY_DARK"
     HELIX_THEME="$HELIX_DARK"
     ICON="🌙"
 else
-    WEZTERM_THEME="$WEZTERM_LIGHT"
+    KITTY_THEME="$KITTY_LIGHT"
     HELIX_THEME="$HELIX_LIGHT"
     ICON="☀️"
 fi
@@ -100,17 +101,13 @@ else
     warn "$(basename $STARSHIP_CFG) introuvable dans dotfiles/starship/"
 fi
 
-# ── WezTerm — écrire le thème dans ~/.config/theme ──────────
-# wezterm.lua lira ce fichier au prochain reload (Ctrl+Shift+R)
 echo "$TARGET" > "$THEME_FILE"
-ok "WezTerm → $WEZTERM_THEME"
 
-# ── Recharger WezTerm via IPC (si disponible) ───────────────
-# wezterm cli permet de recharger la config sans fermer les fenêtres
-if command -v wezterm &>/dev/null; then
-    wezterm cli reload-configuration 2>/dev/null && \
-        ok "WezTerm rechargé via IPC" || \
-        info "WezTerm : appuyer sur ${CYAN}Ctrl+Shift+R${NC} pour appliquer"
+# ── Kitty — écrire theme.conf puis recharger toutes les fenêtres ──
+if [ -d "$HOME/.config/kitty" ]; then
+    echo "include kitty-themes/${KITTY_THEME}.conf" > "$KITTY_THEME_CONF"
+    pkill -USR1 -x kitty 2>/dev/null || true
+    ok "Kitty → $KITTY_THEME"
 fi
 
 echo ""

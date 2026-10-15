@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════
-# ⌨️  Ajout du raccourci clavier GNOME : Super+E → WezTerm
+# ⌨️  Ajout du raccourci clavier GNOME : Super+E → Kitty
 # Compatible : Ubuntu, Debian, Fedora (bureau GNOME)
 # ═══════════════════════════════════════════════════════════
 
@@ -40,25 +40,23 @@ if ! command -v gsettings &>/dev/null; then
 fi
 ok "GNOME détecté"
 
-# Trouver le binaire wezterm
-WEZTERM_BIN=""
+# Trouver le binaire kitty
+KITTY_BIN=""
 for candidate in \
-    "$HOME/.local/bin/wezterm" \
-    "$HOME/dotfiles/bin/wezterm" \
-    "$(command -v wezterm 2>/dev/null || true)"
-do
-    if [ -f "$candidate" ] && [ -x "$candidate" ]; then
-        WEZTERM_BIN="$candidate"
+    "$(command -v kitty 2>/dev/null || true)" \
+    "$HOME/.local/bin/kitty" \
+    "$HOME/dotfiles/bin/kitty"; do
+    if [ -n "$candidate" ] && [ -x "$candidate" ]; then
+        KITTY_BIN="$candidate"
         break
     fi
 done
 
-if [ -z "$WEZTERM_BIN" ]; then
-    err "Binaire wezterm introuvable"
-    echo -e "    ${CYAN}→${NC} Lancer d'abord : ./install.sh"
+if [ -z "$KITTY_BIN" ]; then
+    err "Binaire kitty introuvable — lancer ./install.sh"
     exit 1
 fi
-ok "wezterm trouvé : $WEZTERM_BIN"
+ok "kitty trouvé : $KITTY_BIN"
 
 # ═══════════════════════════════════════════════════════════
 # ⌨️  Ajout du raccourci GNOME
@@ -66,18 +64,18 @@ ok "wezterm trouvé : $WEZTERM_BIN"
 
 print_header "Configuration du raccourci Super+E"
 
-SHORTCUT_NAME="Wezterm"
-SHORTCUT_CMD="$WEZTERM_BIN"
+SHORTCUT_NAME="Kitty"
+SHORTCUT_CMD="$KITTY_BIN"
 SHORTCUT_KEY="<Super>e"
-SHORTCUT_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/wezterm/"
+SHORTCUT_PATH="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/kitty/"
 SHORTCUTS_LIST_KEY="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
 
 # Lire la liste actuelle des raccourcis custom
 CURRENT=$(gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings)
 
 # Vérifier si notre raccourci est déjà dans la liste
-if echo "$CURRENT" | grep -q "wezterm"; then
-    warn "Raccourci wezterm déjà présent dans la liste — mise à jour..."
+if echo "$CURRENT" | grep -q "custom-keybindings/kitty/"; then
+    warn "Raccourci kitty déjà présent dans la liste — mise à jour..."
     NEW_LIST="$CURRENT"
 else
     # Ajouter notre path à la liste existante
@@ -112,7 +110,7 @@ ok "Touche : Super + E"
 print_header "Raccourci ajouté 🎉"
 
 echo ""
-echo -e "  ${GREEN}Super + E${NC} → ouvre WezTerm"
+echo -e "  ${GREEN}Super + E${NC} → ouvre Kitty"
 echo ""
 echo -e "  ${YELLOW}Note :${NC} Le raccourci est actif immédiatement, sans redémarrage."
 echo -e "  Pour le supprimer :"
