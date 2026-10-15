@@ -25,6 +25,7 @@ parse_aliases() {
         /^# ── / {
             s = $0; sub(/^# ── /, "", s); sub(/ ─+.*$/, "", s); section = s; next
         }
+        /^[ \t]*#/ { next }   # exemples en commentaire : pas de vrais alias
         /alias [A-Za-z0-9_.-]+=/ {
             line = $0
             sub(/^.*alias /, "", line)

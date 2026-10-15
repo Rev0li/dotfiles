@@ -53,6 +53,25 @@ alias dark="$DOTFILES_DIR/script/theme-toggle.sh dark"
 alias light="$DOTFILES_DIR/script/theme-toggle.sh light"
 alias theme="$DOTFILES_DIR/script/theme-toggle.sh"
 
+# ── SSH ──────────────────────────────────────────────────────
+
+# Se connecter à un serveur avec un nom court (« ssh monserveur ») :
+# déclarer l'hôte une fois dans ~/.ssh/config (jamais versionné, il reste privé) :
+#
+#   Host monserveur                  # nom court à taper
+#       HostName 203.0.113.10        # IP ou domaine
+#       User moi
+#       Port 22
+#       IdentityFile ~/.ssh/ma_cle   # clé privée (créée avec ssh-keygen)
+#
+# Puis, si tu veux encore plus court, ajouter un alias ici ou dans local.zsh :
+#   alias srv="kitten ssh monserveur"
+# kitten ssh = ssh qui emporte la config du terminal Kitty sur le serveur.
+# Préfixer par TERM=xterm-256color si le serveur ne connaît pas « xterm-kitty »
+# (erreurs d'affichage, touches qui ne marchent pas : c'est le cas du NAS Synology).
+
+alias nas="TERM=xterm-256color kitten ssh nas-songsurf"   # NAS Synology (Host nas-songsurf dans ~/.ssh/config)
+
 # ── Recherche ────────────────────────────────────────────────
 
 alias f="find . -type f -name"             # f "*.md" : chercher un fichier
