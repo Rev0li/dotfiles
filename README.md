@@ -10,7 +10,8 @@ fonctionne sur Linux/Ubuntu et environnements sans `sudo` (42, machines partagé
 | **Zsh** | Shell avec config modulaire |
 | **Starship** | Prompt adaptatif (dark / light) |
 | **Helix** | Éditeur modal |
-| **WezTerm** | Terminal GPU-accéléré |
+| **Kitty** | Terminal principal (Fedora/Hyprland), padding proportionnel |
+| **WezTerm** | Terminal GPU-accéléré (alternative, machines sans Kitty) |
 | **Monaspace Neon** | Police (installée automatiquement) |
 
 ## Installation
@@ -40,7 +41,8 @@ documenté dans **[CLAUDE.md](CLAUDE.md)**, la source de vérité unique.
 
 ### Documentation
 - [CLAUDE.md](CLAUDE.md) — architecture détaillée (source de vérité)
-- [docs/](docs/) — rapports d'audit datés (forme / navigabilité)
+- [docs/install.md](docs/install.md) — détail de l'installation
+- [docs/](docs/) — rapports d'audit datés
 
 ## Thèmes
 
@@ -71,6 +73,29 @@ ports           # ports en écoute (ss -tuln)
 # Git
 gs gd ga gc gp gl gco gb
 ```
+
+### Système (Fedora / Hyprland — `zsh/system.zsh`)
+
+Actifs seulement si l'outil est installé.
+
+```bash
+dnfi / dnfr / dnfu / dnfs   # dnf install / remove / upgrade --refresh / search
+failed                      # services en échec
+jerr / jf                   # erreurs du boot courant / logs en direct
+snaps                       # snapshots snapper
+ts / tsup / tsdown          # tailscale status / up / down
+hreload                     # recharger Hyprland
+audio                       # périphériques audio (wpctl status)
+```
+
+### Remplacements à connaître
+
+Si l'outil est installé, ces commandes standard sont redirigées :
+`ls`/`ll`/`la`/`tree` → **eza**, `cat` → **bat**, `grep` → **rg** (syntaxe ripgrep !).
+Pour l'original : `command grep …` ou `\grep …`. Chaque `cd` affiche l'arborescence du dossier.
+
+Les alias propres à la machine (hôtes SSH, contournements d'apps) vont dans
+`zsh/local.zsh`, non versionné.
 
 ## Mise à jour des binaires
 

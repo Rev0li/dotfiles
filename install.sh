@@ -233,6 +233,11 @@ link "$DOTFILES_DIR/wezterm/wezterm.lua"  "$HOME/.config/wezterm/wezterm.lua"
 mkdir -p "$HOME/.config/kitty"
 link "$DOTFILES_DIR/kitty/kitty.conf"     "$HOME/.config/kitty/kitty.conf"
 link "$DOTFILES_DIR/kitty/padding_watcher.py" "$HOME/.config/kitty/padding_watcher.py"
+mkdir -p "$HOME/.config/kitty/kitty-themes"
+for theme in "$DOTFILES_DIR"/kitty/kitty-themes/*.conf; do
+    dst="$HOME/.config/kitty/kitty-themes/$(basename "$theme")"
+    [ -e "$dst" ] || link "$theme" "$dst"   # ne remplace pas un thème existant
+done
 
 # ═══════════════════════════════════════════════════════════
 # Binaires → dotfiles/bin/

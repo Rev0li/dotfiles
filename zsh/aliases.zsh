@@ -54,11 +54,6 @@ alias dark="$DOTFILES_DIR/script/theme-toggle.sh dark"
 alias light="$DOTFILES_DIR/script/theme-toggle.sh light"
 alias theme="$DOTFILES_DIR/script/theme-toggle.sh"
 
-# ── SSH / NAS ────────────────────────────────────────────────
-
-# TERM forcé à xterm-256color : le NAS Synology ne connaît pas xterm-kitty
-alias nas="TERM=xterm-256color kitten ssh nas-songsurf"
-
 # ── Recherche ────────────────────────────────────────────────
 
 alias f="find . -type f -name"

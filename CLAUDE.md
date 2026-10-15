@@ -28,10 +28,15 @@ To update a binary: delete `bin/<tool>` then re-run `./install.sh`.
 | `zsh/custom_zshrc.zsh` | `~/.zshrc` |
 | `helix/` | `~/.config/helix` |
 | `wezterm/wezterm.lua` | `~/.config/wezterm/wezterm.lua` |
+| `kitty/kitty.conf`, `kitty/padding_watcher.py` | `~/.config/kitty/` (terminal actif sur Fedora) |
+| `kitty/kitty-themes/*.conf` | `~/.config/kitty/kitty-themes/` (only if absent — never overwrites) |
 | `bin/<tool>` | `~/.local/bin/<tool>` (starship, hx, wezterm, wezterm-gui, wezterm-mux-server, eza) |
 
 ### Zsh module load order
-`custom_zshrc.zsh` sources these in sequence: `exports.zsh` → `styles.zsh` → `options.zsh` → `aliases.zsh` → `functions.zsh`. Starship init must stay last. Machine-local config goes in `zsh/local.zsh` (not versioned).
+`custom_zshrc.zsh` sources these in sequence: `exports.zsh` → `styles.zsh` → `options.zsh` → `aliases.zsh` → `functions.zsh` → `system.zsh` (Fedora/Hyprland shortcuts: dnf, systemd, snapper, tailscale, hyprctl, wpctl — each guarded by `command -v`). Starship init must stay last. Machine-local config (personal hosts, app workarounds) goes in `zsh/local.zsh` (not versioned). The `chpwd` hook (tree on every cd) only runs in interactive shells.
+
+### Kitty padding
+`kitty/padding_watcher.py` is a Kitty watcher (`watcher` option) that sets padding as a % of the window size on every resize (`PAD_H`, `PAD_V` at the top of the file). The fixed `window_padding_width` in `kitty.conf` is the fallback.
 
 ### Theme system
 `script/theme-toggle.sh` writes `"dark"` or `"light"` to `~/.config/theme` and updates `~/.config/theme-env` (sourced by zsh for `STARSHIP_CONFIG`). WezTerm reads `~/.config/theme` at startup via `read_theme()` in `wezterm.lua`. Helix config is patched in-place via `sed`. Two Starship configs: `starship/starship-dark.toml` and `starship/starship-light.toml`.

@@ -16,6 +16,7 @@ source "$ZSH_CONFIG_DIR/styles.zsh"
 source "$ZSH_CONFIG_DIR/options.zsh"
 source "$ZSH_CONFIG_DIR/aliases.zsh"
 source "$ZSH_CONFIG_DIR/functions.zsh"
+source "$ZSH_CONFIG_DIR/system.zsh"
 
 # ── Complétion ───────────────────────────────────────────────
 
