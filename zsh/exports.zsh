@@ -27,3 +27,7 @@ export LS_COLORS="di=1;96:fi=0;97:ln=1;93:ex=1;92:*.md=1;95:*.txt=0;94:*.json=1;
 # ── Helix runtime ────────────────────────────────────────────
 
 export HELIX_RUNTIME="${DOTFILES_DIR:-$HOME/dotfiles}/bin/helix-runtime/runtime"
+
+# ── Vault (NAS, accès Tailscale) ─────────────────────────────
+
+export VAULT_ADDR="http://revoli-nas:8200"
