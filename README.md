@@ -53,6 +53,15 @@ Si l'outil est installé, ces commandes standard sont **redirigées** :
 
 Police : **FantasqueSansM Nerd Font** (installée par `install.sh`).
 
+## Bureau Hyprland (facultatif)
+
+Sur mon PC Fedora + Hyprland seulement : `./install.sh --desktop` relie en plus
+`desktop/hypr`, `waybar`, `rofi`, `swaync`, `wlogout` et `wallust` dans `~/.config/`
+(les dossiers existants partent dans `~/.dotfiles_backup_*`). Sans l'option, rien ne change.
+
+Base KooL Hyprland-Dots v2.3.20, migrée en Lua pour Hyprland 0.57. Changer de fond
+d'écran ou de style de barre modifie des fichiers du dépôt : c'est normal.
+
 ## Kitty — raccourcis principaux
 
 | Touches | Action |
