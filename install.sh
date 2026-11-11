@@ -20,6 +20,18 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
 
+# ── Options ─────────────────────────────────────────────────
+
+# --desktop : ajoute la couche bureau Hyprland (desktop/ → ~/.config/), Fedora + Hyprland seulement
+WITH_DESKTOP=false
+for arg in "$@"; do
+    case "$arg" in
+        --desktop) WITH_DESKTOP=true ;;
+        -h|--help) echo "Usage : ./install.sh [--desktop]"; exit 0 ;;
+        *) echo "Option inconnue : $arg (voir --help)"; exit 1 ;;
+    esac
+done
+
 # ── Chemins ─────────────────────────────────────────────────
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -234,6 +246,19 @@ for theme in "$DOTFILES_DIR"/kitty/kitty-themes/*.conf; do
     dst="$HOME/.config/kitty/kitty-themes/$(basename "$theme")"
     [ -e "$dst" ] || link "$theme" "$dst"   # ne remplace pas un thème existant
 done
+
+# ── Couche bureau Hyprland (--desktop) ──────────────────────
+# Dossiers entiers en lien : les scripts KooL écrivent dedans (couleurs wallust,
+# choix de barre), ces changements apparaissent donc dans git status.
+DESKTOP_DIRS=(hypr waybar rofi swaync wlogout wallust)
+if [ "$WITH_DESKTOP" = true ]; then
+    print_header "Couche bureau Hyprland (desktop/)"
+    for d in "${DESKTOP_DIRS[@]}"; do
+        link "$DOTFILES_DIR/desktop/$d" "$HOME/.config/$d"
+    done
+    command -v hyprctl >/dev/null 2>&1 && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] \
+        && hyprctl reload >/dev/null && ok "Hyprland rechargé"
+fi
 
 # ═══════════════════════════════════════════════════════════
 # Binaires → dotfiles/bin/

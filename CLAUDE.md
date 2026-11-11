@@ -30,6 +30,10 @@ To update a binary: delete `bin/<tool>` then re-run `./install.sh`.
 | `kitty/kitty.conf`, `kitty/padding_watcher.py` | `~/.config/kitty/` (only terminal supported) |
 | `kitty/kitty-themes/*.conf` | `~/.config/kitty/kitty-themes/` (only if absent — never overwrites) |
 | `bin/<tool>` | `~/.local/bin/<tool>` (starship, hx, eza, kitty, kitten — kitty only if no system package) |
+| `desktop/{hypr,waybar,rofi,swaync,wlogout,wallust}` | `~/.config/<dir>` — **only with `./install.sh --desktop`** (Fedora + Hyprland) |
+
+### Desktop layer (`desktop/`)
+Hyprland desktop, forked from KooL Hyprland-Dots v2.3.20 (archived upstream, no going back to it). Hyprland ≥ 0.57 reads only `hypr/hyprland.lua` + `hypr/lua/*.lua`; the old `.conf` files are kept but unused. `hyprctl keyword` / old-style `hyprctl dispatch` no longer work: use `hyprctl eval 'hl.config({...})'` and `hyprctl dispatch 'hl.dsp....'`. Whole directories are symlinked, so KooL scripts write into the repo (wallust colors, waybar style choice): expect `git status` changes after a wallpaper or theme change. Ignored (`desktop/.gitignore`): wallpaper effects, `*.bak*`, current-wallpaper link. This repo is **public**: run `gitleaks git --staged .` before every commit touching `desktop/`.
 
 ### Zsh module load order
 `custom_zshrc.zsh` sources these in sequence: `exports.zsh` → `styles.zsh` → `options.zsh` → `aliases.zsh` → `functions.zsh` → `system.zsh` (Fedora/Hyprland shortcuts: dnf, systemd, snapper, tailscale, hyprctl, wpctl — each guarded by `command -v`). Starship init must stay last. Machine-local config (personal hosts, app workarounds) goes in `zsh/local.zsh` (not versioned). The `chpwd` hook (tree on every cd) only runs in interactive shells.

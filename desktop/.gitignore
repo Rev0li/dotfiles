@@ -1,0 +1,7 @@
+# Généré ou propre à la machine : jamais versionné
+hypr/wallpaper_effects/
+hypr/.initial_startup_done
+rofi/.current_wallpaper
+*.bak
+*.bak-*
+*.auto-*.bak
